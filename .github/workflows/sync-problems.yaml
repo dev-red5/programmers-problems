@@ -1,0 +1,46 @@
+name: sync-problems
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  paths-filter:
+    runs-on: ubuntu-latest
+    outputs:
+      problems: ${{ steps.filter.outputs.problems }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 14
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+
+      - name: Init git
+        run: |
+          git config --global user.name "dev-red5"
+          git config --global user.email "dev-red5@naver.com"
+          git remote set-url origin https://github.com/dev-red5/programmers-problems.git
+
+      - name: Write problems.json file
+        id: rewrite
+        run: |
+          node index.js
+
+      - name: Check Problem.json is Change
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          base: HEAD
+          filters: |
+            problems:
+              - 'problems.json'
+
+      - name: Commit to git
+        if: steps.filter.outputs.problems == 'true'
+        run: |
+          echo "Update Programmers Problems"
+          git add problems.json
+          git commit -m "update programmers problems file"
+          git push origin main
