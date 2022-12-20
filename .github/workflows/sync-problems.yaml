@@ -1,9 +1,5 @@
 name: sync-problems
 
-on:
-  schedule:
-    - cron: '0 */6 * * *'
-
 jobs:
   paths-filter:
     runs-on: ubuntu-latest
