@@ -1,5 +1,8 @@
 name: sync-problems
 
+on:
+  push
+
 jobs:
   paths-filter:
     runs-on: ubuntu-latest
