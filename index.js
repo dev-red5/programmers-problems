@@ -12,11 +12,6 @@ async function writeProblemFile() {
 async function getSuccessProblemList() {
   const { totalPages } = await getJSON({
     url: url + 1,
-    fetchParams: {
-      headers: {
-        'Cache-Control': 'max-age=21600', // TTL을 6시간으로 설정
-      },
-    },
   });
 
   const promisedFetchedDataList = [...new Array(totalPages)].map((_, page) =>
