@@ -1,10 +1,5 @@
 import fetch from 'node-fetch';
 
-const fetchUtils = () => ({
-  getJSON,
-  getHTML,
-});
-
 const processStatus = (response) => {
   const successFlag = response.status === 200 || response.ok;
 
@@ -59,4 +54,4 @@ const getData = async (url, fetchParams) => {
   return fetch(url, newFetchParams);
 };
 
-export { fetchUtils };
+export { getJSON, getHTML };

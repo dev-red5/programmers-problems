@@ -1,5 +1,5 @@
 import { writeFile } from 'fs/promises';
-import { fetchUtils } from './fetchUtils.js';
+import { getJSON } from './fetchUtils.js';
 
 const url = 'https://school.programmers.co.kr/api/v1/school/challenges/?page=';
 writeProblemFile();
@@ -10,14 +10,24 @@ async function writeProblemFile() {
 }
 
 async function getSuccessProblemList() {
-  const { totalPages } = await fetchUtils().getJSON({ url: url + 1 });
+  const { totalPages } = await getJSON({
+    url: url + 1,
+    fetchParams: {
+      headers: {
+        'Cache-Control': 'max-age=21600', // TTL을 6시간으로 설정
+      },
+    },
+  });
 
-  const promisedFetchedDataList = [...new Array(totalPages)].map((_, idx) =>
-    fetchProblemPageList(idx + 1)
+  const promisedFetchedDataList = [...new Array(totalPages)].map((_, page) =>
+    fetchProblemPageList(page + 1)
   );
 
   const fetchedDataList = await Promise.all(promisedFetchedDataList);
-  return fetchedDataList.reduce((prev, curr) => [...prev, ...curr], []);
+  return fetchedDataList.reduce(
+    (prevPage, currPage) => [...prevPage, ...currPage],
+    []
+  );
 }
 
 async function fetchProblemPageList(pageNum) {
