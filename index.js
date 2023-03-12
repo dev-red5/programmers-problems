@@ -26,5 +26,5 @@ async function getSuccessProblemList() {
 }
 
 async function fetchProblemPageList(pageNum) {
-  return (await fetchUtils().getJSON({ url: url + pageNum })).result;
+  return (await getJSON({ url: url + pageNum })).result;
 }
